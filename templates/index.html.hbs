@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>{{title}}</title>
+    <meta property="og:title" content="{{title}}" />
+    <meta property="og:url" content="{{redirectUrl}}" />
+    <meta property="og:image" content="{{photoUrl}}" />
+    <meta property="og:description" content="{{description}}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{title}}" />
+    <meta name="twitter:description" content="{{description}}" />
+    <meta name="twitter:image" content="{{photoUrl}}" />
+    <link rel="canonical" href="{{redirectUrl}}" />
+    <link rel="image_src" href="{{photoUrl}}" />
+  </head>
+  <body>
+    <h1 style="display:none;">{{title}}</h1>
+    <p style="display:none;">{{description}}</p>
+    <img src="{{photoUrl}}" style="display:none;" />
+    <a style="display:none;" href="{{redirectUrl}}">{{redirectUrl}}</a>
+  </body>
+  <script>
+    window.location.replace("{{redirectUrl}}");   
+  </script>
+</html>

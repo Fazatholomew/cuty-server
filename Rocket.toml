@@ -1,0 +1,2 @@
+[default.databases.cuty]
+url = "database.db"
