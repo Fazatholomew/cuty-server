@@ -16,6 +16,18 @@ pub struct Link {
     pub description: Option<String>,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct LinkInput {
+    pub shortUrl: String,
+    pub redirectUrl: Option<String>,
+    pub photoUrl: Option<String>,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub token: Option<String>,
+    pub password: Option<String>
+}
+
 impl Link {
     pub async fn select(shortUrl: String, connection: Db) -> Vec<Link> {
         connection
@@ -31,7 +43,7 @@ impl Link {
 
     pub async fn insert(data: Link, connection: Db) -> String {
         let current_shortUrl = data.shortUrl.clone();
-        let result = connection
+        connection
             .run(move |c| {
                 // let t = Link {
                 //     shortUrl: data.shortUrl,
