@@ -84,7 +84,7 @@ async fn insert_link(
     if errors.len() > 0 {
         return Err(status::BadRequest(Some(errors.join(", "))));
     }
-    if new_post.success {
+    if new_post.success && new_post.score > 0.5 {
         let cleaned = Link {
             shortUrl: current_link_data.shortUrl,
             redirectUrl: current_link_data.redirectUrl,

@@ -14,7 +14,7 @@ impl Fairing for CORS {
     }
 
     async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
-        response.set_header(Header::new("Access-Control-Allow-Origin", "http://localhost:5173"));
+        response.set_header(Header::new("Access-Control-Allow-Origin", dotenvy::var("FRONT_END_URL").unwrap()));
         response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET"));
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
