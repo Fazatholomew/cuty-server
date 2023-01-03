@@ -31,8 +31,8 @@ pub struct Db(diesel::SqliteConnection);
 #[derive(Debug, Clone, Deserialize)]
 #[serde(crate = "rocket::serde")]
 struct CheckCaptchaResult {
-    success: bool,
-    score: f32,
+    success: Option<bool>,
+    score: Option<f32>,
     #[serde(alias="error-codes")]
     error_codes: Option<Vec<String>>,
 }
@@ -84,7 +84,10 @@ async fn insert_link(
     if errors.len() > 0 {
         return Err(status::BadRequest(Some(errors.join(", "))));
     }
-    if new_post.success && new_post.score > 0.5 {
+    if new_post.success.is_none() || new_post.score.is_none() {
+        return Err(status::BadRequest(Some("Bot!".to_owned())));  
+    }
+    if new_post.success.unwrap() && new_post.score.unwrap() > 0.5 {
         let cleaned = Link {
             shortUrl: current_link_data.shortUrl,
             redirectUrl: current_link_data.redirectUrl,
