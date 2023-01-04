@@ -9,8 +9,8 @@ RUN apt-get install -y libssl-dev sqlite3 openssl ca-certificates
 WORKDIR /usr/src/app
 COPY diesel.toml Cargo.toml Rocket.toml .env ./
 COPY templates ./templates
-COPY database ./database
 COPY migrations ./migrations
+RUN mkdir database
 ENV ROCKET_ADDRESS=0.0.0.0
 EXPOSE 8000
 CMD ["cuty-server"]
