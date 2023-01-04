@@ -1,5 +1,6 @@
 use crate::diesel::prelude::*;
 use crate::diesel::{Insertable, Queryable};
+use diesel::result::Error;
 use rocket::serde::{Deserialize, Serialize};
 
 use crate::schema::links;
@@ -41,9 +42,9 @@ impl Link {
             .await
     }
 
-    pub async fn insert(data: Link, connection: Db) -> String {
+    pub async fn insert(data: Link, connection: Db) -> Result<String, Option<Error>> {
         let current_shortUrl = data.shortUrl.clone();
-        connection
+        let result: QueryResult<usize> = connection
             .run(move |c| {
                 // let t = Link {
                 //     shortUrl: data.shortUrl,
@@ -54,6 +55,10 @@ impl Link {
                 // };
                 diesel::insert_into(links::table).values(&data).execute(c)
             }).await;
-        current_shortUrl
+        if result.is_ok() {
+            Ok(current_shortUrl)
+        } else {
+            Err(result.err())
+        }
     }
 }

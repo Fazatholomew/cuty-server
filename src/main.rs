@@ -96,7 +96,11 @@ async fn insert_link(
             description: current_link_data.description,
         };
         let result = Link::insert(cleaned, db).await;
-        return Ok(status::Created::new(result));
+        if result.is_ok() {
+            return Ok(status::Created::new(result.unwrap()));
+        } else {
+            return Err(status::BadRequest(Some(result.err().unwrap().unwrap().to_string())))
+        }
     }
     return Err(status::BadRequest(Some("Bot!".to_owned()))); 
 }
