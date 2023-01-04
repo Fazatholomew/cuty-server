@@ -3,3 +3,4 @@
 /database
 ./.env
 /migrations
+.DS_Store

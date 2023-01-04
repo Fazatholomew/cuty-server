@@ -6,3 +6,8 @@ services:
       - 8000:8000
     volumes:
       - /home/clemenza/cuty-database:/usr/src/app/database
+    networks:
+      - nginxNet
+networks:
+  nginxNet:
+      name: "${NGINX_NETWORK}"
