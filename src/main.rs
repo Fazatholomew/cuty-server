@@ -11,14 +11,11 @@ use crate::cors::CORS;
 use crate::diesel::prelude::*;
 use crate::link::Link;
 use link::LinkInput;
-use rocket::serde::{Deserialize};
-use rocket::serde::json::{Json};
-use rocket::{
-    http::{Status},
-    response::status,
-};
-use rocket_dyn_templates::{Template};
 use reqwest::header::CONTENT_LENGTH;
+use rocket::serde::json::Json;
+use rocket::serde::Deserialize;
+use rocket::{http::Status, response::status};
+use rocket_dyn_templates::{context, Template};
 
 // use rocket::fairing::AdHoc;
 // use rocket::{Build, Rocket};
@@ -33,7 +30,7 @@ pub struct Db(diesel::SqliteConnection);
 struct CheckCaptchaResult {
     success: Option<bool>,
     score: Option<f32>,
-    #[serde(alias="error-codes")]
+    #[serde(alias = "error-codes")]
     error_codes: Option<Vec<String>>,
 }
 
@@ -58,6 +55,11 @@ async fn index(slug: &str, db: Db) -> Result<Template, Status> {
     }
 }
 
+#[get("/")]
+fn landingPage() -> Template {
+    Template::render("landingPage", context! {})
+}
+
 #[post("/", format = "json", data = "<data>")]
 async fn insert_link(
     data: Json<LinkInput>,
@@ -70,7 +72,11 @@ async fn insert_link(
     if current_link_data.token.is_none() {
         return Err(status::BadRequest(Some("Bot!".to_owned())));
     }
-    let url = format!("https://www.google.com/recaptcha/api/siteverify?secret={}&response={}", dotenvy::var("SECRET_KEY").unwrap(), current_link_data.token.unwrap());
+    let url = format!(
+        "https://www.google.com/recaptcha/api/siteverify?secret={}&response={}",
+        dotenvy::var("SECRET_KEY").unwrap(),
+        current_link_data.token.unwrap()
+    );
     let new_post: CheckCaptchaResult = reqwest::Client::new()
         .post(url)
         .header(CONTENT_LENGTH, 0)
@@ -85,7 +91,7 @@ async fn insert_link(
         return Err(status::BadRequest(Some(errors.join(", "))));
     }
     if new_post.success.is_none() || new_post.score.is_none() {
-        return Err(status::BadRequest(Some("Bot!".to_owned())));  
+        return Err(status::BadRequest(Some("Bot!".to_owned())));
     }
     if new_post.success.unwrap() && new_post.score.unwrap() > 0.5 {
         let cleaned = Link {
@@ -99,15 +105,22 @@ async fn insert_link(
         if result.is_ok() {
             return Ok(status::Created::new(result.unwrap()));
         } else {
-            return Err(status::BadRequest(Some(result.err().unwrap().unwrap().to_string())))
+            return Err(status::BadRequest(Some(
+                result.err().unwrap().unwrap().to_string(),
+            )));
         }
     }
-    return Err(status::BadRequest(Some("Bot!".to_owned()))); 
+    return Err(status::BadRequest(Some("Bot!".to_owned())));
 }
 
 #[options("/<_..>")]
 fn all_options() {
     /* Intentionally left empty */
+}
+
+#[catch(404)]
+fn not_found() -> Template {
+    Template::render("404", context! {})
 }
 // async fn run_migrations(rocket: Rocket<Build>) -> Rocket<Build> {
 //     use diesel_migrations::{embed_migrations, EmbedMigrations, MigrationConnection};
@@ -133,5 +146,6 @@ fn rocket() -> _ {
         .attach(Db::fairing())
         .attach(CORS)
         // .attach(AdHoc::on_ignite("Diesel Migrations", run_migrations))
-        .mount("/", routes![index, insert_link, all_options])
+        .mount("/", routes![index, insert_link, all_options, landingPage])
+        .register("/", catchers![not_found])
 }

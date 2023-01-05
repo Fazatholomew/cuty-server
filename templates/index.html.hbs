@@ -5,6 +5,7 @@
     <meta property="og:url" content="{{redirectUrl}}" />
     <meta property="og:image" content="{{photoUrl}}" />
     <meta property="og:description" content="{{description}}" />
+    <meta property="og:image:alt" content="{{description}}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{title}}" />
     <meta name="twitter:description" content="{{description}}" />
@@ -21,4 +22,5 @@
   <script>
     window.location.replace("{{redirectUrl}}");   
   </script>
+  <noscript>I am sorry that your browser doesn't support JavaScript. Please <a href="{{redirectUrl}}">click here</a> to go to your destination</noscript>
 </html>
