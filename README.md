@@ -1,6 +1,6 @@
 # Cuty.ink Server 🚀🦀
 
-Welcome to the Cuty.ink Server! This project is a Rust server [Cuty.ink](https://cuty.ink). Frontend source code can be found [here](https://github.com/fazatholomew/cuty)
+Welcome to the Cuty.ink Server! This project is a Rust server for [Cuty.ink](https://cuty.ink). Built using [Rocket](https://rocket.rs/), [Diesel](https://Diesel.rs), and [SQLite](https://www.sqlite.org/index.html), the server should be able to handle a lot of concurrent requests at the same time. Frontend source code can be found [here](https://github.com/fazatholomew/cuty)
 
 ## 🚀 Getting Started
 
